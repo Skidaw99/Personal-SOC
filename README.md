@@ -62,7 +62,7 @@ Visit `http://your-server-ip` to open the dashboard.
 
 ## Gmail App Password Setup
 
-1. Go to https://myaccount.google.com/security
+1. Go to https://myaccount.google.com/apppasswords
 2. Enable **2-Step Verification** (required)
 3. Go to **App Passwords** → Select app: Mail → Select device: Other → name it "SFD"
 4. Copy the 16-character app password → paste into `SMTP_PASSWORD` in `.env`
