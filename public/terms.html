@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — PersonalSOC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: #020408;
+      color: #c8d0d8;
+      line-height: 1.7;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+    }
+
+    h1, h2 { font-family: 'Syne', sans-serif; color: #e8ecf0; }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 0 40px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.12);
+    }
+
+    .page-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .page-header h1 span { color: #00d4ff; }
+
+    .terms-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 40px 0;
+    }
+
+    .terms-list li {
+      display: flex;
+      gap: 16px;
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.88rem;
+      color: #a0a8b4;
+    }
+
+    .terms-list li:last-child { border-bottom: none; }
+
+    .terms-list .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      font-size: 0.75rem;
+      font-family: 'IBM Plex Mono', monospace;
+      color: #00d4ff;
+      flex-shrink: 0;
+    }
+
+    .terms-list a {
+      color: #00d4ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .terms-list a:hover { text-decoration: underline; }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #6a7280;
+      text-decoration: none;
+      transition: color 200ms;
+    }
+
+    .back-link:hover { color: #00d4ff; }
+
+    footer {
+      text-align: center;
+      padding: 40px 0 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+      color: #4a5260;
+    }
+
+    footer .links {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    footer a {
+      color: #6a7280;
+      text-decoration: none;
+      transition: color 200ms;
+    }
+
+    footer a:hover { color: #00d4ff; }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 16px 24px; }
+      .page-header { padding: 40px 0 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Terms of <span>Service</span></h1>
+    </div>
+
+    <ol class="terms-list">
+      <li>
+        <span class="num">1</span>
+        <span>This application is an internal security tool.</span>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <span>It is not available for public registration or use.</span>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <span>Unauthorized access to this system is prohibited.</span>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <span>The operator reserves the right to modify these terms at any time.</span>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <span>This tool is operated in compliance with applicable EU and US law.</span>
+      </li>
+      <li>
+        <span class="num">6</span>
+        <span>Contact: <a href="mailto:security@personalsoc.com">security@personalsoc.com</a></span>
+      </li>
+    </ol>
+
+    <a href="/security-app" class="back-link">&larr; Back to Security Monitoring Engine</a>
+
+    <footer>
+      <div>&copy; 2025 PersonalSOC &middot; Internal Security Tool &middot; Not for public use</div>
+      <div class="links">
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

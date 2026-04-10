@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Monitoring Engine — PersonalSOC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: #020408;
+      color: #c8d0d8;
+      line-height: 1.7;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+    }
+
+    h1, h2, h3 { font-family: 'Syne', sans-serif; color: #e8ecf0; }
+
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.12);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: #00d4ff; }
+
+    .hero p {
+      font-size: 0.95rem;
+      color: #8892a0;
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      border-radius: 100px;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #00d4ff;
+      background: rgba(0, 212, 255, 0.06);
+    }
+
+    section {
+      padding: 48px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    section h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 24px;
+      color: #00d4ff;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    ul li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.85rem;
+      color: #a0a8b4;
+    }
+
+    ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00d4ff;
+      box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+    }
+
+    .contact-box {
+      background: rgba(0, 212, 255, 0.04);
+      border: 1px solid rgba(0, 212, 255, 0.12);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .contact-box a {
+      color: #00d4ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-box a:hover { text-decoration: underline; }
+
+    .contact-box p {
+      font-size: 0.8rem;
+      color: #6a7280;
+      margin-top: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 0 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+      color: #4a5260;
+    }
+
+    footer .links {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    footer a {
+      color: #6a7280;
+      text-decoration: none;
+      transition: color 200ms;
+    }
+
+    footer a:hover { color: #00d4ff; }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 16px 24px; }
+      .hero { padding: 48px 0 40px; }
+      section { padding: 32px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="hero">
+      <h1>Security <span>Monitoring</span> Engine</h1>
+      <p>Internal fraud detection and account security monitoring system</p>
+      <span class="badge">Internal Tool &mdash; Not available for public registration</span>
+    </div>
+
+    <section>
+      <h2>What It Does</h2>
+      <ul>
+        <li>Monitors authorized social media accounts for unauthorized access</li>
+        <li>Detects suspicious login activity, unknown devices, and geographic anomalies</li>
+        <li>Identifies API token misuse and potential account takeover attempts</li>
+        <li>Generates security reports for law enforcement coordination</li>
+        <li>All monitoring is performed solely on accounts owned by the operator</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>How We Use Facebook Data</h2>
+      <ul>
+        <li>We request read-only access to login activity signals via Facebook Login</li>
+        <li>Data is used exclusively for security monitoring of our own accounts</li>
+        <li>No data is sold, shared, or used for advertising purposes</li>
+        <li>All data is stored encrypted on private infrastructure</li>
+        <li>Access tokens are encrypted at rest using AES-256</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="contact-box">
+        <a href="mailto:security@personalsoc.com">security@personalsoc.com</a>
+        <p>For questions about this application or data practices</p>
+      </div>
+    </section>
+
+    <footer>
+      <div>&copy; 2025 PersonalSOC &middot; Internal Security Tool &middot; Not for public use</div>
+      <div class="links">
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

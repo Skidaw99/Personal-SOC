@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Deletion Request — PersonalSOC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: #020408;
+      color: #c8d0d8;
+      line-height: 1.7;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+    }
+
+    h1, h2 { font-family: 'Syne', sans-serif; color: #e8ecf0; }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 0 40px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.12);
+    }
+
+    .page-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .page-header h1 span { color: #00d4ff; }
+
+    .page-header p {
+      font-size: 0.9rem;
+      color: #8892a0;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .content {
+      padding: 48px 0;
+    }
+
+    .instruction-box {
+      background: rgba(0, 212, 255, 0.04);
+      border: 1px solid rgba(0, 212, 255, 0.12);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .instruction-box p {
+      font-size: 0.88rem;
+      color: #a0a8b4;
+      margin-bottom: 12px;
+    }
+
+    .instruction-box p:last-child { margin-bottom: 0; }
+
+    .instruction-box a {
+      color: #00d4ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .instruction-box a:hover { text-decoration: underline; }
+
+    .instruction-box .email-highlight {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 6px;
+      font-weight: 600;
+      color: #00d4ff;
+    }
+
+    .status-section {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 40px;
+    }
+
+    .status-section h2 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
+
+    .status-section p {
+      font-size: 0.85rem;
+      color: #8892a0;
+      margin-bottom: 16px;
+    }
+
+    .status-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .status-form input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #e8ecf0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 200ms;
+    }
+
+    .status-form input:focus {
+      border-color: rgba(0, 212, 255, 0.4);
+    }
+
+    .status-form input::placeholder {
+      color: #4a5260;
+    }
+
+    .status-form button {
+      padding: 12px 24px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      border-radius: 8px;
+      color: #00d4ff;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 200ms;
+      white-space: nowrap;
+    }
+
+    .status-form button:hover {
+      background: rgba(0, 212, 255, 0.14);
+      border-color: rgba(0, 212, 255, 0.4);
+    }
+
+    .status-result {
+      display: none;
+      padding: 16px 20px;
+      background: rgba(0, 212, 255, 0.04);
+      border: 1px solid rgba(0, 212, 255, 0.12);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: #a0a8b4;
+    }
+
+    .status-result.visible { display: block; }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      font-size: 0.8rem;
+      color: #6a7280;
+      text-decoration: none;
+      transition: color 200ms;
+    }
+
+    .back-link:hover { color: #00d4ff; }
+
+    footer {
+      text-align: center;
+      padding: 40px 0 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+      color: #4a5260;
+    }
+
+    footer .links {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    footer a {
+      color: #6a7280;
+      text-decoration: none;
+      transition: color 200ms;
+    }
+
+    footer a:hover { color: #00d4ff; }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 16px 24px; }
+      .page-header { padding: 40px 0 28px; }
+      .status-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Data <span>Deletion</span> Request</h1>
+      <p>Request removal of your data from our security monitoring system</p>
+    </div>
+
+    <div class="content">
+
+      <div class="instruction-box">
+        <p>To request deletion of your data, email</p>
+        <p><span class="email-highlight"><a href="mailto:security@personalsoc.com?subject=DATA%20DELETION%20REQUEST">security@personalsoc.com</a></span></p>
+        <p>with subject: <strong style="color:#e8ecf0">DATA DELETION REQUEST</strong></p>
+        <p>We will confirm deletion within 30 days.</p>
+      </div>
+
+      <div class="status-section">
+        <h2>Check Deletion Status</h2>
+        <p>Enter your confirmation code to check deletion status:</p>
+
+        <div class="status-form">
+          <input type="text" id="confirmCode" placeholder="Enter confirmation code">
+          <button onclick="checkStatus()">Check Status</button>
+        </div>
+
+        <div class="status-result" id="statusResult">
+          Request received. Contact <a href="mailto:security@personalsoc.com" style="color:#00d4ff;text-decoration:none;font-weight:600">security@personalsoc.com</a> for status.
+        </div>
+      </div>
+
+    </div>
+
+    <a href="/security-app" class="back-link">&larr; Back to Security Monitoring Engine</a>
+
+    <footer>
+      <div>&copy; 2025 PersonalSOC &middot; Internal Security Tool &middot; Not for public use</div>
+      <div class="links">
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    function checkStatus() {
+      var code = document.getElementById('confirmCode').value.trim();
+      var result = document.getElementById('statusResult');
+      if (code.length > 0) {
+        result.className = 'status-result visible';
+      }
+    }
+  </script>
+</body>
+</html>
