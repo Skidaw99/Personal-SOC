@@ -34,16 +34,6 @@ celery_app.conf.update(
             "schedule": settings.polling_interval_twitter,
             "args": ("twitter",),
         },
-        "poll-linkedin": {
-            "task": "scheduler.tasks.poll_platform",
-            "schedule": settings.polling_interval_linkedin,
-            "args": ("linkedin",),
-        },
-        "poll-tiktok": {
-            "task": "scheduler.tasks.poll_platform",
-            "schedule": settings.polling_interval_tiktok,
-            "args": ("tiktok",),
-        },
         "poll-youtube": {
             "task": "scheduler.tasks.poll_platform",
             "schedule": settings.polling_interval_youtube,
