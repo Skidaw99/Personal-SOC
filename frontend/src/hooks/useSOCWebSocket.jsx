@@ -11,7 +11,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useThreatState } from '../engine/threatState'
 
-const WS_URL = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws/soc`
+function getWSUrl() {
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const user = localStorage.getItem('sfd_user') || ''
+  const pass = localStorage.getItem('sfd_pass') || ''
+  const token = btoa(`${user}:${pass}`)
+  return `${proto}//${location.host}/ws/soc?token=${token}`
+}
 const RECONNECT_BASE_MS = 1000
 const RECONNECT_MAX_MS = 30000
 
@@ -26,7 +32,7 @@ export function useSOCWebSocket() {
     if (wsRef.current?.readyState === WebSocket.OPEN) return
 
     try {
-      const ws = new WebSocket(WS_URL)
+      const ws = new WebSocket(getWSUrl())
       wsRef.current = ws
 
       ws.onopen = () => {

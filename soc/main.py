@@ -18,6 +18,8 @@ from soc.config import get_soc_settings
 from soc.database import init_db
 from soc.api.routes.ws import router as ws_router
 from soc.api.routes.ai import router as ai_router
+from soc.api.routes.intel import router as intel_router
+from soc.api.routes.actors import router as actors_router
 from soc.api.websocket import ws_manager
 from soc.intel.engine import IntelEngine
 from soc.orchestrator.pipeline import OrchestrationPipeline
@@ -107,6 +109,8 @@ app.add_middleware(
 # ── Routes ───────────────────────────────────────────────────────────────────
 app.include_router(ws_router)
 app.include_router(ai_router)
+app.include_router(intel_router)
+app.include_router(actors_router)
 
 
 @app.get("/health")
