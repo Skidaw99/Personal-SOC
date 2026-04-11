@@ -98,6 +98,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    volumes:
+      - ./soc/data/maxmind:/app/data/maxmind:ro
     networks:
       - sfd_network
     ports:
