@@ -1,11 +1,10 @@
 /**
  * Panel — base floating panel component.
  *
- * Receives layout from the layout engine and renders as a
- * glass-morphism card at the computed position.
- * All panels extend this base.
+ * Renders a glassmorphism card with header.
+ * Positioning is 100% CSS-driven — the panelId maps to
+ * .panel-{id} which is positioned per threat state in index.css.
  */
-import { usePanelLayout } from '../engine/layoutEngine'
 import { useThreatState } from '../engine/threatState'
 
 export default function Panel({
@@ -14,27 +13,21 @@ export default function Panel({
   icon,
   children,
   scanline = false,
+  status,
   className = '',
 }) {
-  const layout = usePanelLayout(panelId)
   const { isCritical } = useThreatState()
 
-  if (!layout) return null
-
   const dotColor = isCritical ? 'var(--red)' : 'var(--cyan)'
-  const dotShadow = isCritical
-    ? '0 0 8px var(--red-glow)'
-    : '0 0 8px var(--cyan-glow)'
+  const dotShadow = isCritical ? '0 0 8px var(--red-glow)' : '0 0 8px var(--cyan-glow)'
 
   return (
-    <div
-      className={`panel ${scanline ? 'panel-scanline' : ''} ${className}`}
-      style={layout.style}
-    >
+    <div className={`panel panel-${panelId} ${scanline ? 'panel-scanline' : ''} ${className}`}>
       <div className="panel-header">
-        <span className="dot" style={{ background: dotColor, boxShadow: dotShadow }} />
-        {icon && <span style={{ fontSize: '0.85rem' }}>{icon}</span>}
-        <span>{title}</span>
+        <span className="panel-dot" style={{ background: dotColor, boxShadow: dotShadow }} />
+        {icon && <span className="panel-icon">{icon}</span>}
+        <span className="panel-title">{title}</span>
+        {status && <span className="panel-status">{status}</span>}
       </div>
       <div className="panel-body">
         {children}

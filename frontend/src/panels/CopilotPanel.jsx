@@ -1,13 +1,10 @@
 /**
- * AI Copilot Panel — persistent chat with the AI copilot.
+ * AI Copilot Panel — persistent chat with the SOC AI.
  *
- * Features:
- * - Proactive messages from AI (pushed via WebSocket/state machine)
- * - Chat input for analyst questions
- * - Auto-generated alerts for critical events
- * - Markdown-formatted responses
- *
- * Always visible, always reachable. Expands in higher threat states.
+ * - Proactive alerts on new incidents
+ * - Large input field in CRITICAL state
+ * - Messages: AI bubbles left, user bubbles right
+ * - Auto-scroll, loading indicator
  */
 import { useState, useRef, useEffect } from 'react'
 import Panel from './Panel'
@@ -19,60 +16,38 @@ function Message({ msg }) {
   const isAlert = msg.type === 'alert' || msg.type === 'proactive'
 
   return (
-    <div
-      className="fade-in"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: isAI ? 'flex-start' : 'flex-end',
-        marginBottom: 8,
-      }}
-    >
-      {/* Sender label */}
+    <div className="fade-in" style={{
+      display: 'flex', flexDirection: 'column',
+      alignItems: isAI ? 'flex-start' : 'flex-end',
+      marginBottom: 10,
+    }}>
       <span style={{
-        fontSize: '0.55rem',
+        fontFamily: 'var(--font-display)', fontSize: 9,
+        letterSpacing: '2px', textTransform: 'uppercase',
         color: isAI ? 'var(--cyan)' : 'var(--text-muted)',
-        fontFamily: 'var(--font-display)',
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-        marginBottom: 2,
+        marginBottom: 3,
       }}>
         {isAI ? 'AI COPILOT' : 'YOU'}
       </span>
 
-      {/* Message bubble */}
       <div style={{
-        maxWidth: '90%',
-        padding: '8px 12px',
+        maxWidth: '92%',
+        padding: '10px 14px',
         borderRadius: 8,
-        fontSize: '0.75rem',
-        lineHeight: 1.5,
-        background: isAlert
-          ? 'var(--red-dim)'
-          : isAI
-            ? 'rgba(0, 212, 255, 0.06)'
-            : 'rgba(255, 255, 255, 0.06)',
-        border: `1px solid ${
-          isAlert ? 'var(--border-danger)' : 'var(--border)'
-        }`,
-        color: isAlert ? 'var(--red)' : 'var(--text-primary)',
+        fontSize: 14,
+        lineHeight: 1.6,
         fontFamily: 'var(--font-mono)',
         whiteSpace: 'pre-wrap',
         wordBreak: 'break-word',
+        background: isAlert ? 'var(--red-dim)' : isAI ? 'rgba(0,212,255,0.04)' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${isAlert ? 'var(--border-danger)' : 'var(--border)'}`,
+        color: isAlert ? 'var(--red)' : 'var(--text-primary)',
       }}>
         {msg.content || msg.message || msg.text}
       </div>
 
-      {/* Timestamp */}
-      <span style={{
-        fontSize: '0.5rem',
-        color: 'var(--text-muted)',
-        marginTop: 2,
-      }}>
-        {msg.timestamp
-          ? new Date(msg.timestamp).toLocaleTimeString('en-GB', { hour12: false })
-          : ''
-        }
+      <span style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+        {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('en-GB', { hour12: false }) : ''}
       </span>
     </div>
   )
@@ -85,31 +60,25 @@ export default function CopilotPanel() {
   const scrollRef = useRef(null)
   const lastProactiveRef = useRef(0)
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
   }, [copilotMessages.length])
 
-  // Proactive alert when incident arrives
+  // Proactive alert on new incident
   useEffect(() => {
     if (activeIncident && Date.now() - lastProactiveRef.current > 5000) {
       lastProactiveRef.current = Date.now()
       const risk = activeIncident.risk_score ?? 0
       const type = (activeIncident.event_type || 'unknown').replace(/_/g, ' ')
       const ip = activeIncident.source_ip || 'unknown IP'
+      const actor = activeIncident.actor_display_name
 
       pushCopilotMessage({
         role: 'assistant',
-        type: 'proactive',
-        content: `⚠ New ${type} detected from ${ip} — risk score ${risk.toFixed(0)}/100. ${
-          risk >= 90
-            ? 'CRITICAL: Automated response initiated. IP block + alert deployed.'
-            : risk >= 70
-              ? 'HIGH RISK: Review recommended. Webhook alert sent.'
-              : 'Monitoring. Will escalate if pattern continues.'
-        }`,
+        type: risk >= 90 ? 'proactive' : 'alert',
+        content: risk >= 90
+          ? `Critical threat detected — ${type} from ${ip}${actor ? ` (actor: ${actor})` : ''}. Risk: ${risk.toFixed(0)}/100.\n\nAutomated response initiated. IP flagged for blocking. Full enrichment running.`
+          : `New ${type} detected from ${ip}. Risk: ${risk.toFixed(0)}/100. Monitoring for escalation.`,
       })
     }
   }, [activeIncident, pushCopilotMessage])
@@ -120,12 +89,7 @@ export default function CopilotPanel() {
 
     const userMsg = input.trim()
     setInput('')
-
-    pushCopilotMessage({
-      role: 'user',
-      content: userMsg,
-    })
-
+    pushCopilotMessage({ role: 'user', content: userMsg })
     setLoading(true)
 
     try {
@@ -149,16 +113,14 @@ export default function CopilotPanel() {
         })
       } else {
         pushCopilotMessage({
-          role: 'assistant',
-          content: 'Connection to AI backend failed. Retrying...',
-          type: 'alert',
+          role: 'assistant', type: 'alert',
+          content: 'AI backend connection failed.',
         })
       }
     } catch {
       pushCopilotMessage({
-        role: 'assistant',
+        role: 'assistant', type: 'alert',
         content: 'Network error. AI copilot temporarily unavailable.',
-        type: 'alert',
       })
     } finally {
       setLoading(false)
@@ -166,31 +128,33 @@ export default function CopilotPanel() {
   }
 
   return (
-    <Panel panelId={PANELS.COPILOT} title="AI COPILOT" icon="◈">
+    <Panel
+      panelId={PANELS.COPILOT}
+      title="AI COPILOT"
+      icon="&#9672;"
+      status={loading ? 'ANALYZING...' : undefined}
+    >
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Messages */}
-        <div
-          ref={scrollRef}
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            paddingRight: 4,
-            marginBottom: 8,
-          }}
-        >
+        <div ref={scrollRef} style={{
+          flex: 1, overflowY: 'auto', overflowX: 'hidden',
+          paddingRight: 4, marginBottom: 8,
+        }}>
           {copilotMessages.length === 0 ? (
             <div style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               justifyContent: 'center', height: '100%', gap: 8,
               color: 'var(--text-muted)', textAlign: 'center',
             }}>
-              <span style={{ fontSize: '1.5rem' }}>◈</span>
-              <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-display)', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: 24 }}>&#9672;</span>
+              <span style={{
+                fontFamily: 'var(--font-display)', fontSize: 11,
+                letterSpacing: '2px',
+              }}>
                 AI COPILOT READY
               </span>
-              <span style={{ fontSize: '0.65rem' }}>
-                Ask me anything about threats, IPs, or incidents
+              <span style={{ fontSize: 12 }}>
+                Ask about threats, IPs, or incidents
               </span>
             </div>
           ) : (
@@ -201,11 +165,11 @@ export default function CopilotPanel() {
 
           {loading && (
             <div style={{
-              fontSize: '0.65rem', color: 'var(--cyan)',
-              fontFamily: 'var(--font-display)', letterSpacing: '0.08em',
+              fontFamily: 'var(--font-display)', fontSize: 11,
+              letterSpacing: '2px', color: 'var(--cyan)',
               padding: '4px 0',
             }}>
-              ◈ ANALYZING...
+              &#9672; ANALYZING...
             </div>
           )}
         </div>
@@ -219,30 +183,32 @@ export default function CopilotPanel() {
             disabled={loading}
             style={{
               flex: 1,
-              padding: '8px 12px',
-              background: 'rgba(255,255,255,0.04)',
+              padding: isCritical ? '12px 14px' : '8px 12px',
+              background: 'rgba(255,255,255,0.03)',
               border: `1px solid ${isCritical ? 'var(--border-danger)' : 'var(--border)'}`,
               borderRadius: 6,
               color: 'var(--text-primary)',
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
+              fontSize: 14,
               outline: 'none',
+              transition: 'padding 300ms ease, border-color 200ms ease',
             }}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
             style={{
-              padding: '8px 14px',
+              padding: '8px 16px',
               background: 'var(--cyan-dim)',
               border: '1px solid var(--border-active)',
               borderRadius: 6,
               color: 'var(--cyan)',
               fontFamily: 'var(--font-display)',
-              fontSize: '0.6rem',
+              fontSize: 10,
               fontWeight: 600,
-              letterSpacing: '0.08em',
-              opacity: loading || !input.trim() ? 0.4 : 1,
+              letterSpacing: '1.5px',
+              opacity: loading || !input.trim() ? 0.3 : 1,
+              transition: 'opacity 200ms ease',
             }}
           >
             SEND

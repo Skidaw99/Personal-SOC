@@ -1,11 +1,8 @@
 /**
- * Threat Actor Panel — active threat actor profile card.
+ * Threat Actor Panel — active threat actor profile.
  *
- * Shows the currently foregrounded actor with:
- * - Identity and threat level
- * - Known IPs, countries, platforms
- * - Behavioral flags (TOR, VPN, automation)
- * - Activity timeline sparkline
+ * Large readable text, clear data hierarchy,
+ * colored flags, known IPs list.
  */
 import Panel from './Panel'
 import { PANELS } from '../engine/layoutEngine'
@@ -20,21 +17,11 @@ const LEVEL_COLORS = {
 
 function Flag({ label, active }) {
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 4,
-      padding: '2px 8px',
-      borderRadius: 4,
-      fontSize: '0.6rem',
-      fontFamily: 'var(--font-display)',
-      letterSpacing: '0.06em',
-      background: active ? 'var(--cyan-dim)' : 'transparent',
-      border: `1px solid ${active ? 'var(--border-active)' : 'var(--border)'}`,
-      color: active ? 'var(--cyan)' : 'var(--text-muted)',
-      textTransform: 'uppercase',
-    }}>
-      {active && <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--cyan)' }} />}
+    <span className={`intel-badge ${active ? 'intel-badge-active' : 'intel-badge-inactive'}`}>
+      {active && <span style={{
+        width: 5, height: 5, borderRadius: '50%',
+        background: 'var(--red)', marginRight: 4, display: 'inline-block',
+      }} />}
       {label}
     </span>
   )
@@ -42,18 +29,10 @@ function Flag({ label, active }) {
 
 function DataRow({ label, value, color }) {
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '4px 0',
-      borderBottom: '1px solid rgba(255,255,255,0.03)',
-    }}>
-      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-        {label}
-      </span>
-      <span style={{ fontSize: '0.75rem', color: color || 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-        {value}
+    <div className="intel-grid" style={{ marginBottom: 2 }}>
+      <span className="intel-grid-label">{label}</span>
+      <span className="intel-grid-value" style={{ color: color || 'var(--text-primary)' }}>
+        {value || 'UNKNOWN'}
       </span>
     </div>
   )
@@ -61,102 +40,91 @@ function DataRow({ label, value, color }) {
 
 export default function ThreatActorPanel() {
   const { activeActor } = useThreatState()
-
   const actor = activeActor || {}
   const level = actor.threat_level || 'low'
-  const levelColor = LEVEL_COLORS[level] || 'var(--text-muted)'
+  const lc = LEVEL_COLORS[level] || 'var(--text-muted)'
 
   return (
-    <Panel panelId={PANELS.ACTOR} title="THREAT ACTOR" icon="👤">
+    <Panel panelId={PANELS.ACTOR} title="THREAT ACTOR" icon="&#9670;">
       {!activeActor ? (
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          height: '100%', color: 'var(--text-muted)', fontSize: '0.7rem',
-          fontFamily: 'var(--font-display)',
+          height: '100%', color: 'var(--text-muted)', fontSize: 14,
+          fontFamily: 'var(--font-display)', letterSpacing: '2px',
         }}>
           NO ACTIVE ACTOR
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {/* Identity header */}
-          <div style={{ marginBottom: 4 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Identity */}
+          <div>
             <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1rem',
-              fontWeight: 700,
-              color: levelColor,
-              letterSpacing: '0.05em',
-              textShadow: `0 0 12px ${levelColor}40`,
+              fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700,
+              color: lc, letterSpacing: '2px',
+              textShadow: `0 0 16px ${lc}40`,
             }}>
               {actor.display_name || 'UNKNOWN'}
             </div>
-            {actor.alias && (
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 2 }}>
-                aka "{actor.alias}"
-              </div>
-            )}
           </div>
 
           {/* Threat level badge */}
-          <div style={{
-            display: 'inline-flex',
+          <span style={{
             alignSelf: 'flex-start',
-            padding: '3px 10px',
+            padding: '4px 14px',
             borderRadius: 4,
-            background: `${levelColor}18`,
-            border: `1px solid ${levelColor}40`,
+            background: `${lc}18`,
+            border: `1px solid ${lc}40`,
             fontFamily: 'var(--font-display)',
-            fontSize: '0.6rem',
-            fontWeight: 600,
-            color: levelColor,
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            fontSize: 11, fontWeight: 600, letterSpacing: '2px',
+            color: lc, textTransform: 'uppercase',
           }}>
             {level}
-          </div>
+          </span>
 
           {/* Data rows */}
           <div style={{ marginTop: 4 }}>
             <DataRow label="Events" value={actor.total_events || 0} />
-            <DataRow label="Confidence" value={`${(actor.confidence_score || 0).toFixed(0)}%`} />
-            <DataRow label="Status" value={(actor.status || 'unknown').toUpperCase()} />
+            <DataRow label="Status" value={(actor.status || 'active').toUpperCase()} />
             {actor.known_countries?.length > 0 && (
               <DataRow label="Countries" value={actor.known_countries.join(', ')} />
             )}
             {actor.platforms_targeted?.length > 0 && (
               <DataRow label="Platforms" value={actor.platforms_targeted.join(', ')} />
             )}
+            {actor.attack_categories?.length > 0 && (
+              <DataRow label="TTPs" value={actor.attack_categories.join(', ')} />
+            )}
           </div>
 
           {/* Behavioral flags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+          <div className="intel-badges">
             <Flag label="TOR" active={actor.is_tor} />
             <Flag label="VPN" active={actor.is_vpn} />
             <Flag label="BOT" active={actor.uses_automation} />
-            <Flag label="X-PLAT" active={actor.is_cross_platform} />
+            <Flag label="X-PLAT" active={(actor.platforms_targeted?.length || 0) > 1} />
           </div>
 
-          {/* Known IPs preview */}
+          {/* Known IPs */}
           {actor.known_ips?.length > 0 && (
-            <div style={{ marginTop: 6 }}>
+            <div>
               <div style={{
-                fontSize: '0.6rem', color: 'var(--text-muted)',
-                fontFamily: 'var(--font-display)', letterSpacing: '0.06em',
-                textTransform: 'uppercase', marginBottom: 4,
+                fontFamily: 'var(--font-display)', fontSize: 11,
+                letterSpacing: '2px', color: 'var(--text-muted)',
+                textTransform: 'uppercase', marginBottom: 6,
               }}>
                 Known IPs ({actor.known_ips.length})
               </div>
-              {actor.known_ips.slice(0, 5).map(ip => (
+              {actor.known_ips.slice(0, 6).map(ip => (
                 <div key={ip} style={{
-                  fontSize: '0.7rem', color: 'var(--cyan)',
-                  fontFamily: 'var(--font-mono)', padding: '1px 0',
+                  fontFamily: 'var(--font-mono)', fontSize: 13,
+                  color: 'var(--cyan)', padding: '2px 0',
                 }}>
                   {ip}
                 </div>
               ))}
-              {actor.known_ips.length > 5 && (
-                <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>
-                  +{actor.known_ips.length - 5} more
+              {actor.known_ips.length > 6 && (
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                  +{actor.known_ips.length - 6} more
                 </div>
               )}
             </div>
