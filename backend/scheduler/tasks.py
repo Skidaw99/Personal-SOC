@@ -37,12 +37,10 @@ def poll_platform(self, platform_name: str):
 
 
 async def _poll_platform_async(platform_name: str):
-    collector_class = COLLECTOR_REGISTRY.get(platform_name)
-    if not collector_class:
+    collector = COLLECTOR_REGISTRY.get(platform_name)
+    if not collector:
         logger.warning("no_collector_for_platform", platform=platform_name)
         return
-
-    collector = collector_class()
 
     async with AsyncSessionLocal() as db:
         try:
@@ -113,11 +111,9 @@ async def _validate_all_tokens_async():
 
         for account in accounts:
             try:
-                collector_class = COLLECTOR_REGISTRY.get(account.platform.value)
-                if not collector_class:
+                collector = COLLECTOR_REGISTRY.get(account.platform.value)
+                if not collector:
                     continue
-
-                collector = collector_class()
                 access_token = decrypt_token(account.encrypted_access_token) if account.encrypted_access_token else ""
                 is_valid = await collector.validate_token(access_token)
 
