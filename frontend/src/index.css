@@ -186,3 +186,71 @@ button { cursor: pointer; font-family: var(--font-mono); }
 }
 
 .fade-in { animation: fade-in 400ms ease forwards; }
+
+/* ── Critical threat banner ───────────────────────────────────────────────── */
+
+@keyframes banner-pulse {
+  0%, 100% { background: rgba(255, 0, 64, 0.12); border-color: rgba(255, 0, 64, 0.5); }
+  50%      { background: rgba(255, 0, 64, 0.06); border-color: rgba(255, 0, 64, 0.25); }
+}
+
+.critical-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 0, 64, 0.10);
+  border-bottom: 1px solid rgba(255, 0, 64, 0.5);
+  backdrop-filter: blur(16px);
+  animation: banner-pulse 2s ease-in-out infinite;
+}
+
+.critical-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+}
+
+.critical-banner-icon {
+  color: var(--red);
+  font-size: 0.85rem;
+  text-shadow: 0 0 10px var(--red-glow);
+  animation: critical-pulse 1s ease infinite;
+}
+
+.critical-banner-text {
+  color: var(--red);
+  font-weight: 700;
+  text-shadow: 0 0 10px var(--red-glow);
+}
+
+.critical-banner-sep {
+  color: rgba(255, 255, 255, 0.12);
+}
+
+.critical-banner-detail {
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.critical-banner-actor {
+  color: var(--red);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.critical-banner-risk {
+  color: var(--red);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  text-shadow: 0 0 8px var(--red-glow);
+}

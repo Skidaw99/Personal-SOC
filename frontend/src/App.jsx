@@ -14,12 +14,47 @@ import LiveFeedPanel from './panels/LiveFeedPanel'
 import ThreatActorPanel from './panels/ThreatActorPanel'
 import IntelPanel from './panels/IntelPanel'
 import CopilotPanel from './panels/CopilotPanel'
-import EvidencePanel from './panels/EvidencePanel'
+import StatsPanel from './panels/StatsPanel'
+
+// ── Critical threat banner ─────────────────────────────────────────────────
+
+function CriticalBanner() {
+  const { isCritical, activeIncident } = useThreatState()
+
+  if (!isCritical || !activeIncident) return null
+
+  const risk = activeIncident.risk_score ?? 0
+  const actor = activeIncident.actor_display_name || 'UNKNOWN'
+  const type = (activeIncident.event_type || 'threat').replace(/_/g, ' ').toUpperCase()
+
+  return (
+    <div className="critical-banner">
+      <div className="critical-banner-inner">
+        <span className="critical-banner-icon">&#9888;</span>
+        <span className="critical-banner-text">
+          CRITICAL THREAT DETECTED
+        </span>
+        <span className="critical-banner-sep">|</span>
+        <span className="critical-banner-detail">
+          {type}
+        </span>
+        <span className="critical-banner-sep">|</span>
+        <span className="critical-banner-actor">
+          {actor}
+        </span>
+        <span className="critical-banner-sep">|</span>
+        <span className="critical-banner-risk">
+          RISK {risk.toFixed(0)}
+        </span>
+      </div>
+    </div>
+  )
+}
 
 // ── Status bar (top of viewport) ────────────────────────────────────────────
 
-function StatusBar() {
-  const { current, eventCount, connected } = useStatusData()
+function StatusBar({ connected }) {
+  const { current, eventCount } = useThreatState()
 
   const stateColors = {
     CALM: 'var(--cyan)',
@@ -33,7 +68,7 @@ function StatusBar() {
   return (
     <div style={{
       position: 'fixed',
-      top: 0,
+      top: current === 'CRITICAL' ? 36 : 0,
       left: 0,
       right: 0,
       height: 32,
@@ -48,17 +83,14 @@ function StatusBar() {
       fontFamily: 'var(--font-display)',
       fontSize: '0.6rem',
       letterSpacing: '0.12em',
+      transition: 'top 400ms ease',
     }}>
-      {/* Left: system name */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ color: 'var(--text-secondary)' }}>SOC</span>
         <span style={{ color: 'var(--text-muted)' }}>CYBER OPS CENTER</span>
       </div>
 
-      {/* Center: threat state indicator */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{
           width: 6, height: 6, borderRadius: '50%',
           background: color,
@@ -74,7 +106,6 @@ function StatusBar() {
         </span>
       </div>
 
-      {/* Right: connection status + event count */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.65rem' }}>
           {eventCount} events
@@ -87,6 +118,7 @@ function StatusBar() {
           <span style={{
             width: 5, height: 5, borderRadius: '50%',
             background: connected ? 'var(--green)' : 'var(--red)',
+            boxShadow: connected ? '0 0 6px var(--green)' : '0 0 6px var(--red)',
           }} />
           {connected ? 'CONNECTED' : 'OFFLINE'}
         </span>
@@ -95,13 +127,7 @@ function StatusBar() {
   )
 }
 
-function useStatusData() {
-  const state = useThreatState()
-  // connected comes from websocket, we'll pass it through
-  return { ...state, connected: true }
-}
-
-// ── Threat state debug controls (dev only) ──────────────────────────────────
+// ── Dev controls (dev only) ─────────────────────────────────────────────────
 
 function DevControls() {
   const { current, setThreatState, processEvent } = useThreatState()
@@ -113,7 +139,10 @@ function DevControls() {
       risk_score: riskScore,
       severity: riskScore >= 90 ? 'critical' : riskScore >= 70 ? 'high' : riskScore >= 50 ? 'medium' : 'low',
       source_ip: `${Math.floor(Math.random() * 223 + 1)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-      source_country: ['DE', 'RU', 'CN', 'NL', 'US'][Math.floor(Math.random() * 5)],
+      source_country: ['DE', 'RU', 'CN', 'NL', 'US', 'BR', 'IR'][Math.floor(Math.random() * 7)],
+      // Random geo coordinates for globe visualization
+      source_latitude: (Math.random() * 140) - 60,
+      source_longitude: (Math.random() * 360) - 180,
       occurred_at: new Date().toISOString(),
       actor_display_name: riskScore >= 70 ? `TOR-BF-${Math.random().toString(16).slice(2, 6).toUpperCase()}` : undefined,
       actor_threat_level: riskScore >= 90 ? 'critical' : riskScore >= 70 ? 'high' : 'medium',
@@ -163,27 +192,9 @@ function DevControls() {
         </button>
       ))}
       <div style={{ width: 1, background: 'var(--border)', margin: '0 4px' }} />
-      <button
-        onClick={() => injectEvent(30)}
-        style={devBtnStyle}
-        title="Low risk event"
-      >
-        +LOW
-      </button>
-      <button
-        onClick={() => injectEvent(60)}
-        style={devBtnStyle}
-        title="Medium risk event"
-      >
-        +MED
-      </button>
-      <button
-        onClick={() => injectEvent(80)}
-        style={devBtnStyle}
-        title="High risk event"
-      >
-        +HIGH
-      </button>
+      <button onClick={() => injectEvent(30)} style={devBtnStyle} title="Low risk event">+LOW</button>
+      <button onClick={() => injectEvent(60)} style={devBtnStyle} title="Medium risk event">+MED</button>
+      <button onClick={() => injectEvent(80)} style={devBtnStyle} title="High risk event">+HIGH</button>
       <button
         onClick={() => injectEvent(95, 'account_takeover')}
         style={{ ...devBtnStyle, color: 'var(--red)', borderColor: 'var(--border-danger)' }}
@@ -209,6 +220,7 @@ const devBtnStyle = {
 
 function CyberOpsCenter() {
   const { stateClass, isCritical } = useThreatState()
+  const { connected } = useSOCWebSocket()
 
   return (
     <div
@@ -223,8 +235,11 @@ function CyberOpsCenter() {
       {/* Background effects */}
       <ParticleGrid />
 
+      {/* Critical threat banner */}
+      <CriticalBanner />
+
       {/* Status bar */}
-      <StatusBar />
+      <StatusBar connected={connected} />
 
       {/* Audio alert (invisible) */}
       <AlertAudio />
@@ -235,7 +250,7 @@ function CyberOpsCenter() {
       <ThreatActorPanel />
       <IntelPanel />
       <CopilotPanel />
-      <EvidencePanel />
+      <StatsPanel />
 
       {/* Dev controls — remove in production */}
       <DevControls />

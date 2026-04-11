@@ -129,7 +129,7 @@ export default function CopilotPanel() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/soc/copilot/chat', {
+      const res = await fetch('/api/soc/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

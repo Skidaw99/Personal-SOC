@@ -23,7 +23,7 @@ export const PANELS = {
   ACTOR:    'actor',
   INTEL:    'intel',
   COPILOT:  'copilot',
-  EVIDENCE: 'evidence',
+  STATS:    'stats',
 }
 
 // ── Layout definitions per state ────────────────────────────────────────────
@@ -38,7 +38,7 @@ const LAYOUTS = {
     [PANELS.ACTOR]:    { x: 1,  y: 62, w: 20, h: 36, opacity: 0.4,  zIndex: 2  },
     [PANELS.INTEL]:    { x: 86, y: 5,  w: 13, h: 55, opacity: 0.5,  zIndex: 2  },
     [PANELS.COPILOT]:  { x: 72, y: 72, w: 27, h: 26, opacity: 0.7,  zIndex: 5  },
-    [PANELS.EVIDENCE]: { x: 22, y: 72, w: 20, h: 26, opacity: 0.4,  zIndex: 2  },
+    [PANELS.STATS]:    { x: 22, y: 72, w: 20, h: 26, opacity: 0.4,  zIndex: 2  },
   },
 
   // ── ELEVATED: feeds come forward, globe shrinks, actor cards appear ───
@@ -48,7 +48,7 @@ const LAYOUTS = {
     [PANELS.ACTOR]:    { x: 1,  y: 70, w: 30, h: 28, opacity: 0.9,  zIndex: 3  },
     [PANELS.INTEL]:    { x: 76, y: 3,  w: 23, h: 50, opacity: 0.9,  zIndex: 3  },
     [PANELS.COPILOT]:  { x: 70, y: 72, w: 29, h: 26, opacity: 0.8,  zIndex: 5  },
-    [PANELS.EVIDENCE]: { x: 32, y: 70, w: 20, h: 28, opacity: 0.5,  zIndex: 2  },
+    [PANELS.STATS]:    { x: 32, y: 70, w: 20, h: 28, opacity: 0.5,  zIndex: 2  },
   },
 
   // ── ACTIVE: incident takes 60%, rest dimmed ───────────────────────────
@@ -58,7 +58,7 @@ const LAYOUTS = {
     [PANELS.ACTOR]:    { x: 71, y: 1,  w: 28, h: 40, opacity: 1,    zIndex: 4  },
     [PANELS.INTEL]:    { x: 71, y: 42, w: 28, h: 30, opacity: 0.9,  zIndex: 3  },
     [PANELS.COPILOT]:  { x: 55, y: 62, w: 44, h: 36, opacity: 1,    zIndex: 5  },
-    [PANELS.EVIDENCE]: { x: 1,  y: 42, w: 28, h: 30, opacity: 0.5,  zIndex: 2  },
+    [PANELS.STATS]:    { x: 1,  y: 42, w: 28, h: 30, opacity: 0.5,  zIndex: 2  },
   },
 
   // ── CRITICAL: full takeover, only incident + copilot ──────────────────
@@ -68,7 +68,7 @@ const LAYOUTS = {
     [PANELS.ACTOR]:    { x: 60, y: 1,  w: 39, h: 40, opacity: 1,    zIndex: 4  },
     [PANELS.INTEL]:    { x: 60, y: 42, w: 39, h: 24, opacity: 0.8,  zIndex: 3  },
     [PANELS.COPILOT]:  { x: 40, y: 67, w: 59, h: 31, opacity: 1,    zIndex: 6  },
-    [PANELS.EVIDENCE]: { x: 1,  y: 67, w: 38, h: 31, opacity: 0.7,  zIndex: 3  },
+    [PANELS.STATS]:    { x: 1,  y: 67, w: 38, h: 31, opacity: 0.7,  zIndex: 3  },
   },
 }
 
