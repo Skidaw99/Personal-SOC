@@ -86,7 +86,7 @@ services:
       - ./backend:/app
     networks:
       - sfd_network
-    command: celery -A scheduler.celery_app beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A scheduler.celery_app beat --loglevel=info
 
   frontend:
     build:
